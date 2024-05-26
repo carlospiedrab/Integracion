@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Data;
 using Microsoft.AspNetCore.Mvc;
+using Models.Dtos;
 using Models.Entidades;
 
 namespace API.Controllers
@@ -13,9 +14,16 @@ namespace API.Controllers
     public class ProductoController : ControllerBase
     {
         [HttpGet]
-        public ActionResult<List<Producto>> Get()
+        public ActionResult<List<ProductoDto>> Get()
         {
-            return ProductoData.listaProducto;
+            return ProductoData.listaProducto
+                   .Select(p => new ProductoDto
+                   {
+                       NombreProducto = p.NombreProducto,
+                       Categoria = p.Categoria,
+                       Marca = p.Marca,
+                       Precio = p.Precio
+                   }).ToList();
         }
     }
 }
