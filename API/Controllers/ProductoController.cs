@@ -14,7 +14,7 @@ namespace API.Controllers
     public class ProductoController : ControllerBase
     {
         [HttpGet]
-        public ActionResult<List<ProductoDto>> GetListado()
+        public ActionResult<List<ProductoDto>> GetProductos()
         {
             return ProductoData.listaProducto
                    .Select(p => new ProductoDto
@@ -22,7 +22,8 @@ namespace API.Controllers
                        NombreProducto = p.NombreProducto,
                        Categoria = p.Categoria,
                        Marca = p.Marca,
-                       Precio = p.Precio
+                       Precio = p.Precio,
+                       Costo = p.Costo
                    }).ToList();
         }
     }
