@@ -27,6 +27,7 @@ CREATE TABLE Producto (
 	MarcaId int NOT NULL
 );
 
+-- Constraints
 ALTER TABLE Producto
 ADD CONSTRAINT PK_Producto PRIMARY KEY (ProductoId);
 
