@@ -17,5 +17,6 @@ namespace Data
         public DbSet<Marca> Marcas { get; set; }
 
         public DbSet<Producto> Productos { get; set; }
+        public DbSet<PrecioOferta> PrecioOfertas { get; set; }
     }
 }
