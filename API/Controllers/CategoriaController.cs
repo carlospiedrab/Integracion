@@ -20,12 +20,12 @@ namespace API.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Categoria>>> GetCategorias()
-        {
-            List<Categoria> lista = await _context.Categorias.ToListAsync();
-            return Ok(lista);
-        }
+        // [HttpGet]
+        // public async Task<ActionResult<List<Categoria>>> GetCategorias()
+        // {
+        //     List<Categoria> lista = await _context.Categorias.ToListAsync();
+        //     return Ok(lista);
+        // }
 
 
     }
