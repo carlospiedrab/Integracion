@@ -1,6 +1,6 @@
 # Aplicacion .Net Web api
 
-### Contruir la Aplicacion
+### Construir la Aplicacion
 
 dotnet build
 
