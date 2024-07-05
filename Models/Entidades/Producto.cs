@@ -13,7 +13,7 @@ namespace Models.Entidades
         [Key]
         [Column("ProductoId")]
         public int Id { get; set; }
-        public string NombreProducto { get; set; }       
+        public string NombreProducto { get; set; }
         public decimal Precio { get; set; }
         public decimal Costo { get; set; }
 
@@ -24,5 +24,6 @@ namespace Models.Entidades
         public int MarcaId { get; set; }
         [ForeignKey("MarcaId")]
         public Marca Marca { get; set; }
+        public PrecioOferta Promocion { get; set; }
     }
 }
