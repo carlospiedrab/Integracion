@@ -20,5 +20,6 @@ namespace Data
 
         public DbSet<Producto> Productos { get; set; }
         public DbSet<PrecioOferta> PrecioOfertas { get; set; }
+        public DbSet<ProductoProveedor> ProductosProveedores { get; set; }
     }
 }
