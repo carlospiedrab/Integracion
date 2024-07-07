@@ -17,9 +17,9 @@ namespace Data
         public DbSet<AppUser> AppUser { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Marca> Marcas { get; set; }
-
         public DbSet<Producto> Productos { get; set; }
         public DbSet<PrecioOferta> PrecioOfertas { get; set; }
         public DbSet<ProductoProveedor> ProductosProveedores { get; set; }
+        public DbSet<Proveedor> Proveedores { get; set; }
     }
 }
