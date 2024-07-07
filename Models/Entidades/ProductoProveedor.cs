@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Models.Entidades
 {
+    [Table("ProductoProveedor")]
     public class ProductoProveedor
     {
         [Key]
