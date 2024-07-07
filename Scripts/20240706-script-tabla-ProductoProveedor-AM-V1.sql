@@ -1,0 +1,14 @@
+-- CREACIÓN DE TABLA PRODUCTO_PROVEEDOR V1.0
+-- SCRIPT PUEDE EJECUTARSE MULTIPLES VECES EN LA BASE
+-- CREA LA TABLA SI NO EXISTE CON TODOS LOS CAMPOS
+-- SI YA EXISTE AGREGA O ACTUALIZA LOS CAMBIOS NECESARIOS
+USE DB_141102_integraciond;
+GO
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductoProveedor')
+BEGIN
+    CREATE TABLE ProductoProveedor (
+        ProductoProveedorId INT NOT NULL IDENTITY CONSTRAINT PK_ProductoProveedor_ProductoProveedorId PRIMARY KEY,
+        ProductoId INT NOT NULL CONSTRAINT FK_ProductoProveedor_Producto FOREIGN KEY (ProductoId) REFERENCES Producto(ProductoId),
+        ProveedorId INT NOT NULL CONSTRAINT FK_ProductoProveedor_Proveedor FOREIGN KEY (ProveedorId) REFERENCES Proveedor(ProveedorId)
+    );
+END
