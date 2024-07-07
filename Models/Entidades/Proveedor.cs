@@ -12,8 +12,7 @@ namespace Models.Entidades
     {
         [Key]
         [Column("ProveedorId")]
-        public int Id {get; set;}
-
+        public int Id { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public string Direccion { get; set; }
