@@ -14,8 +14,8 @@ namespace Models.Entidades
         public int ProveedorId { get; set; }
         public int ProductoId { get; set; }
 
-        //[ForeignKey("ProveedorId")]
-        //public Proveedor Proveedor { get; set; }
+        [ForeignKey("ProveedorId")]
+        public Proveedor Proveedor { get; set; }
 
         [ForeignKey("ProductoId")]
         public Producto Producto { get; set; }
