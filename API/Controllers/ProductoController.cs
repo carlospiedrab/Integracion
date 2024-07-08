@@ -22,7 +22,7 @@ namespace API.Controllers
             _context = context;
         }
 
-        [Authorize(Policy = "AdminVendedorRol")]
+        //[Authorize(Policy = "AdminVendedorRol")]
         [HttpGet]
         public async Task<ActionResult<List<ProductoDto>>> GetProductos()
         {
@@ -32,6 +32,7 @@ namespace API.Controllers
                                             .Include(o => o.Promocion)
                                             .Select(p => new ProductoDto
                                             {
+                                                Id = p.Id,
                                                 NombreProducto = p.NombreProducto,
                                                 Categoria = p.Categoria.Nombre,
                                                 Marca = p.Marca.Nombre,
@@ -42,13 +43,16 @@ namespace API.Controllers
                                                               : p.Promocion.NuevoPrecio,
                                                 TextoPromocional = p.Promocion == null
                                                               ? null
-                                                              : p.Promocion.TextoPromocional
+                                                              : p.Promocion.TextoPromocional,
+                                                Estado = p.Estado == true
+                                                        ? "Activo" 
+                                                        : "Incactivo"
                                             }).ToListAsync();
 
             return Ok(lista);
         }
 
-        [Authorize(Policy = "AdminVendedorRol")]
+        //[Authorize(Policy = "AdminVendedorRol")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductoDto>> GetProducto(int id)
         {
@@ -74,19 +78,69 @@ namespace API.Controllers
                                                     : producto.Promocion.NuevoPrecio,
                 TextoPromocional = producto.Promocion == null
                                                     ? null
-                                                    : producto.Promocion.TextoPromocional
+                                                    : producto.Promocion.TextoPromocional,
+                Estado = producto.Estado == true
+                                                        ? "Activo"
+                                                        : "Incactivo"
             });
         }
 
-        [Authorize(Policy = "AdminRol")]
-        [HttpPost]
-        public async Task<ActionResult<Producto>> PostProducto(Producto producto)
+
+
+
+        //[Authorize(Policy = "AdminVendedorRol")]
+        [HttpGet("GetProductosActivos")]
+        public async Task<ActionResult<List<ProductoDto>>> GetProductosActivos()
+        {
+            List<ProductoDto> lista = await _context.Productos
+                                            .Include(c => c.Categoria)
+                                            .Include(m => m.Marca)
+                                            .Include(o => o.Promocion)
+                                            .Where(p => p.Estado == true)
+                                            .Select(p => new ProductoDto
+                                            {
+                                                Id = p.Id,
+                                                NombreProducto = p.NombreProducto,
+                                                Categoria = p.Categoria.Nombre,
+                                                Marca = p.Marca.Nombre,
+                                                Precio = p.Precio,
+                                                Costo = p.Costo,
+                                                PrecioActual = p.Promocion == null
+                                                              ? p.Precio
+                                                              : p.Promocion.NuevoPrecio,
+                                                TextoPromocional = p.Promocion == null
+                                                              ? null
+                                                              : p.Promocion.TextoPromocional,
+                                                Estado = p.Estado == true
+                                                        ? "Activo"
+                                                        : "Incactivo"
+                                            }).ToListAsync();
+
+            return Ok(lista);
+
+        }
+
+
+            //[Authorize(Policy = "AdminRol")]
+            [HttpPost]
+        public async Task<ActionResult<Producto>> PostProducto(ProductoPostDto productoPostDto)
         {
             try
             {
-                await _context.Productos.AddAsync(producto);
+
+                Producto productoNew = new Producto();
+                productoNew.NombreProducto = productoPostDto.NombreProducto;
+                productoNew.CategoriaId = productoPostDto.CategoriaId;
+                productoNew.MarcaId = productoPostDto.MarcaId;
+                productoNew.Precio = productoPostDto.Precio;
+                productoNew.Costo = productoPostDto.Costo;
+                productoNew.Estado = true;
+
+
+
+                await _context.Productos.AddAsync(productoNew);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("GetProducto", new { id = producto.Id }, producto);
+                return CreatedAtAction("GetProducto", new { id = productoNew.Id }, productoPostDto);
             }
             catch (System.Exception)
             {
@@ -95,27 +149,28 @@ namespace API.Controllers
             }
         }
 
-        [Authorize(Policy = "AdminRol")]
+        //[Authorize(Policy = "AdminRol")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutProducto(int id, Producto producto)
+        public async Task<ActionResult> PutProducto(int id, ProductoPutDto productoPutDto)
         {
-            if (id != producto.Id)
+            if (id != productoPutDto.Id)
             {
                 return BadRequest();
             }
             Producto productoBD = await _context.Productos.FindAsync(id);
             if (productoBD == null) return NotFound();
 
-            productoBD.NombreProducto = producto.NombreProducto;
-            productoBD.CategoriaId = producto.CategoriaId;
-            productoBD.MarcaId = producto.MarcaId;
-            productoBD.Precio = producto.Precio;
-            productoBD.Costo = producto.Costo;
+            productoBD.NombreProducto = productoPutDto.NombreProducto;
+            productoBD.CategoriaId = productoPutDto.CategoriaId;
+            productoBD.MarcaId = productoPutDto.MarcaId;
+            productoBD.Precio = productoPutDto.Precio;
+            productoBD.Costo = productoPutDto.Costo;
+            productoBD.Estado  = productoPutDto.Estado;
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        [Authorize(Policy = "AdminRol")]
+        //[Authorize(Policy = "AdminRol")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteProducto(int id)
         {
@@ -125,6 +180,10 @@ namespace API.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+
+
+
 
     }
 }
