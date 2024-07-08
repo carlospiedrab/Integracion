@@ -84,6 +84,10 @@ namespace API.Controllers
         {
             try
             {
+                if (producto.Categoria.Estado==false || producto.Marca.Estado==false)
+                {
+                    return BadRequest("No se pudo crear el Producto");
+                }
                 await _context.Productos.AddAsync(producto);
                 await _context.SaveChangesAsync();
                 return CreatedAtAction("GetProducto", new { id = producto.Id }, producto);
