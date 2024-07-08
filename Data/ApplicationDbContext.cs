@@ -10,17 +10,17 @@ namespace Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions options)
+            : base(options) { }
 
         public DbSet<AppUser> AppUser { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Marca> Marcas { get; set; }
-
         public DbSet<Producto> Productos { get; set; }
         public DbSet<PrecioOferta> PrecioOfertas { get; set; }
-
+        public DbSet<ProductoProveedor> ProductosProveedores { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
+        public DbSet<Bodega> Bodegas { get; set; }
+        public DbSet<BodegaProducto> BodegaProductos { get; set; }
     }
 }
