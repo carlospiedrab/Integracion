@@ -113,9 +113,9 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> PutProducto(int id, ProductoNuevoDto producto)
         {
-            if (id != 0)
+            if (id == 0)
             {
-                return BadRequest();
+                return BadRequest("Id de producto invalido.");
             }
             Producto productoBD = await _context.Productos.FindAsync(id);
             if (productoBD == null) return NotFound();
