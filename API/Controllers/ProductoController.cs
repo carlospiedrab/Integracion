@@ -80,13 +80,27 @@ namespace API.Controllers
 
         [Authorize(Policy = "AdminRol")]
         [HttpPost]
-        public async Task<ActionResult<Producto>> PostProducto(Producto producto)
+        public async Task<ActionResult<Producto>> PostProducto(ProductoNuevoDto producto)
         {
             try
             {
-                await _context.Productos.AddAsync(producto);
+                var categoria = _context.Categorias.Find(producto.CategoriaId);
+                var marca = _context.Marcas.Find(producto.MarcaId);
+                if (categoria.Estado==false || marca.Estado==false)
+                {
+                    return BadRequest("No se pudo crear el Producto");
+                }
+                var productoAgregar = new Producto{
+                    NombreProducto = producto.NombreProducto,
+                    Precio = producto.Precio,
+                    Costo = producto.Costo,
+                    CategoriaId = categoria.Id,
+                    MarcaId = marca.Id
+                };
+
+                await _context.Productos.AddAsync(productoAgregar);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("GetProducto", new { id = producto.Id }, producto);
+                return CreatedAtAction("GetProducto", new { id = productoAgregar.Id }, producto);
             }
             catch (System.Exception)
             {
@@ -97,20 +111,21 @@ namespace API.Controllers
 
         [Authorize(Policy = "AdminRol")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutProducto(int id, Producto producto)
+        public async Task<ActionResult> PutProducto(int id, ProductoNuevoDto producto)
         {
-            if (id != producto.Id)
+            if (id == 0)
             {
-                return BadRequest();
+                return BadRequest("Id de producto invalido.");
             }
             Producto productoBD = await _context.Productos.FindAsync(id);
             if (productoBD == null) return NotFound();
 
             productoBD.NombreProducto = producto.NombreProducto;
-            productoBD.CategoriaId = producto.CategoriaId;
-            productoBD.MarcaId = producto.MarcaId;
             productoBD.Precio = producto.Precio;
             productoBD.Costo = producto.Costo;
+            productoBD.CategoriaId = producto.CategoriaId;
+            productoBD.MarcaId = producto.MarcaId;
+            
             await _context.SaveChangesAsync();
             return NoContent();
         }
