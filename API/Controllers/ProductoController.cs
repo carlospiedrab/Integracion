@@ -22,7 +22,7 @@ namespace API.Controllers
             _context = context;
         }
 
-        //[Authorize(Policy = "AdminVendedorRol")]
+        [Authorize(Policy = "AdminVendedorRol")]
         [HttpGet]
         public async Task<ActionResult<List<ProductoDto>>> GetProductos()
         {
@@ -52,7 +52,7 @@ namespace API.Controllers
             return Ok(lista);
         }
 
-        //[Authorize(Policy = "AdminVendedorRol")]
+        [Authorize(Policy = "AdminVendedorRol")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductoDto>> GetProducto(int id)
         {
@@ -88,7 +88,7 @@ namespace API.Controllers
 
 
 
-        //[Authorize(Policy = "AdminVendedorRol")]
+        [Authorize(Policy = "AdminVendedorRol")]
         [HttpGet("GetProductosActivos")]
         public async Task<ActionResult<List<ProductoDto>>> GetProductosActivos()
         {
@@ -121,8 +121,8 @@ namespace API.Controllers
         }
 
 
-            //[Authorize(Policy = "AdminRol")]
-            [HttpPost]
+        [Authorize(Policy = "AdminRol")]
+        [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(ProductoPostDto productoPostDto)
         {
             try
@@ -149,7 +149,7 @@ namespace API.Controllers
             }
         }
 
-        //[Authorize(Policy = "AdminRol")]
+        [Authorize(Policy = "AdminRol")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutProducto(int id, ProductoPutDto productoPutDto)
         {
@@ -170,7 +170,7 @@ namespace API.Controllers
             return NoContent();
         }
 
-        //[Authorize(Policy = "AdminRol")]
+        [Authorize(Policy = "AdminRol")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteProducto(int id)
         {
