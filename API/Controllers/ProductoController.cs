@@ -155,7 +155,7 @@ namespace API.Controllers
         {
             if (id != productoPutDto.Id)
             {
-                return BadRequest();
+                return BadRequest("Id de producto invalido.");
             }
             Producto productoBD = await _context.Productos.FindAsync(id);
             if (productoBD == null) return NotFound();
