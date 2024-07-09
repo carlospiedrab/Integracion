@@ -65,6 +65,44 @@ namespace API.Controllers
         }
 
         [Authorize(Policy = "AdminRol")]
+        [HttpGet("{id}")]  // api/Account/Perfil
+        public async Task<ActionResult> Perfil(string id)
+        {
+            var userRoles = await _db.UserRoles.Where(ur => ur.UserId == id).ToListAsync();
+            var roles = await _db.Roles.ToListAsync();
+            var usuario = await _userManager.Users.FirstOrDefaultAsync(w => w.Id == id);
+
+            if (usuario == null)
+            {
+                _response.IsExitoso = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.Mensaje = "Usuario no encontrado";
+                return NotFound(_response);
+            }
+
+            var usuarioRol = new UsuarioDto
+            {
+                UserId = usuario.Id.ToString(),
+                Username = usuario.UserName,
+                LastName = usuario.LastName,
+                FirstName = usuario.FirstName,
+                Email = usuario.Email,
+                Token = "NA"
+            };
+
+            var rolesUsuario = userRoles.Select(ur => roles.FirstOrDefault(r => r.Id == ur.RoleId)?.Name).ToList();
+            usuarioRol.Rol = string.Join(", ", rolesUsuario);
+
+            _response.Resultado = usuarioRol;
+            _response.IsExitoso = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Mensaje = "Perfil del Usuario";
+            return Ok(_response);
+        }
+
+
+
+        [Authorize(Policy = "AdminRol")]
         [HttpPost("registro")]   // POST: api/usuario/registro
         public async Task<ActionResult<UsuarioDto>> Registro(AddOrUpdateAppUserDto registroDto)
         {
