@@ -80,17 +80,27 @@ namespace API.Controllers
 
         [Authorize(Policy = "AdminRol")]
         [HttpPost]
-        public async Task<ActionResult<Producto>> PostProducto(Producto producto)
+        public async Task<ActionResult<Producto>> PostProducto(ProductoDto producto)
         {
             try
             {
-                if (producto.Categoria.Estado==false || producto.Marca.Estado==false)
+                var categoria = _context.Categorias.Where(x => x.Nombre.Equals(producto.Categoria)).First();
+                var marca = _context.Marcas.Where(x => x.Nombre.Equals(producto.Marca)).First();
+                if (categoria.Estado==false || marca.Estado==false)
                 {
                     return BadRequest("No se pudo crear el Producto");
                 }
-                await _context.Productos.AddAsync(producto);
+                var productoAgregar = new Producto{
+                    NombreProducto = producto.NombreProducto,
+                    Precio = producto.Precio,
+                    Costo = producto.Costo,
+                    CategoriaId = categoria.Id,
+                    MarcaId = marca.Id
+                };
+
+                await _context.Productos.AddAsync(productoAgregar);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("GetProducto", new { id = producto.Id }, producto);
+                return CreatedAtAction("GetProducto", new { id = productoAgregar.Id }, producto);
             }
             catch (System.Exception)
             {
