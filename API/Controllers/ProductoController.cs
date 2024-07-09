@@ -80,12 +80,12 @@ namespace API.Controllers
 
         [Authorize(Policy = "AdminRol")]
         [HttpPost]
-        public async Task<ActionResult<Producto>> PostProducto(ProductoDto producto)
+        public async Task<ActionResult<Producto>> PostProducto(ProductoNuevoDto producto)
         {
             try
             {
-                var categoria = _context.Categorias.Where(x => x.Nombre.Equals(producto.Categoria)).First();
-                var marca = _context.Marcas.Where(x => x.Nombre.Equals(producto.Marca)).First();
+                var categoria = _context.Categorias.Find(producto.CategoriaId);
+                var marca = _context.Marcas.Find(producto.MarcaId);
                 if (categoria.Estado==false || marca.Estado==false)
                 {
                     return BadRequest("No se pudo crear el Producto");
@@ -111,9 +111,9 @@ namespace API.Controllers
 
         [Authorize(Policy = "AdminRol")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutProducto(int id, Producto producto)
+        public async Task<ActionResult> PutProducto(int id, ProductoNuevoDto producto)
         {
-            if (id != producto.Id)
+            if (id != 0)
             {
                 return BadRequest();
             }
@@ -121,10 +121,11 @@ namespace API.Controllers
             if (productoBD == null) return NotFound();
 
             productoBD.NombreProducto = producto.NombreProducto;
-            productoBD.CategoriaId = producto.CategoriaId;
-            productoBD.MarcaId = producto.MarcaId;
             productoBD.Precio = producto.Precio;
             productoBD.Costo = producto.Costo;
+            productoBD.CategoriaId = producto.CategoriaId;
+            productoBD.MarcaId = producto.MarcaId;
+            
             await _context.SaveChangesAsync();
             return NoContent();
         }
