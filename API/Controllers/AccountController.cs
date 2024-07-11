@@ -65,6 +65,44 @@ namespace API.Controllers
         }
 
         [Authorize(Policy = "AdminRol")]
+        [HttpGet("{id}")]  // api/Account/Perfil
+        public async Task<ActionResult> Perfil(string id)
+        {
+            var userRoles = await _db.UserRoles.Where(ur => ur.UserId == id).ToListAsync();
+            var roles = await _db.Roles.ToListAsync();
+            var usuario = await _userManager.Users.FirstOrDefaultAsync(w => w.Id == id);
+
+            if (usuario == null)
+            {
+                _response.IsExitoso = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.Mensaje = "Usuario no encontrado";
+                return NotFound(_response);
+            }
+
+            var usuarioRol = new UsuarioDto
+            {
+                UserId = usuario.Id.ToString(),
+                Username = usuario.UserName,
+                LastName = usuario.LastName,
+                FirstName = usuario.FirstName,
+                Email = usuario.Email,
+                Token = "NA"
+            };
+
+            var rolesUsuario = userRoles.Select(ur => roles.FirstOrDefault(r => r.Id == ur.RoleId)?.Name).ToList();
+            usuarioRol.Rol = string.Join(", ", rolesUsuario);
+
+            _response.Resultado = usuarioRol;
+            _response.IsExitoso = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Mensaje = "Perfil del Usuario";
+            return Ok(_response);
+        }
+
+
+
+        [Authorize(Policy = "AdminRol")]
         [HttpPost("registro")]   // POST: api/usuario/registro
         public async Task<ActionResult<UsuarioDto>> Registro(AddOrUpdateAppUserDto registroDto)
         {
@@ -130,6 +168,40 @@ namespace API.Controllers
         private async Task<bool> UsuarioExiste(string username)
         {
             return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
+        }
+
+        [HttpGet("Perfil/{username}")]  // api/Account/Perfil/username
+        public async Task<ActionResult> GetUserProfile(string username)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+            {
+                _response.IsExitoso = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.Mensaje = "Usuario no encontrado";
+                return NotFound(_response);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var userDto = new UsuarioDto
+            {
+                UserId = user.Id.ToString(),
+                Username = user.UserName,
+                LastName = user.LastName,
+                FirstName = user.FirstName,
+                Email = user.Email,
+                Rol = string.Join(", ", roles),
+                Token = null, // Token puede ser configurado si es necesario
+                Url = Url.Action(nameof(GetUserProfile), "Account", new { username }, Request.Scheme)
+            };
+
+            _response.Resultado = userDto;
+            _response.IsExitoso = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Mensaje = "Perfil del Usuario";
+
+            return Ok(_response);
         }
     }
 }
