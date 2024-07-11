@@ -28,7 +28,8 @@ namespace Data
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, usuario.UserName)
+                new Claim(JwtRegisteredClaimNames.NameId, usuario.UserName),
+                new Claim("UserId", usuario.Id)
             };
 
             var roles = await _userManager.GetRolesAsync(usuario);

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Data;
+using Data.Servicios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +19,14 @@ namespace API.Controllers
     public class BodegaProductoController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private IKardexInventarioServicio _kardexServicio;
         private ApiResponse _response;
 
-        public BodegaProductoController(ApplicationDbContext context)
+        public BodegaProductoController(ApplicationDbContext context, 
+        IKardexInventarioServicio kardexServicio)
         {
             _context = context;
+            _kardexServicio = kardexServicio;
             _response = new();
         }
 
@@ -45,10 +50,13 @@ namespace API.Controllers
             var bodegaProductoBd = await _context
                 .BodegaProductos.Where(bp => bp.BodegaId == bodegaId && bp.ProductoId == productoId)
                 .FirstOrDefaultAsync();
+            
+            int stockAnterior = 0;
+            BodegaProducto bodegaProducto;
 
             if (bodegaProductoBd == null)
             {
-                BodegaProducto bodegaProducto = new BodegaProducto
+                bodegaProducto = new BodegaProducto
                 {
                     BodegaId = bodegaId,
                     ProductoId = productoId,
@@ -56,28 +64,30 @@ namespace API.Controllers
                 };
 
                 await _context.AddAsync(bodegaProducto);
-                await _context.SaveChangesAsync();
-                _response.Resultado = bodegaProducto;
             }
             else
             {
+                stockAnterior = bodegaProductoBd.Cantidad;
                 bodegaProductoBd.Cantidad += cantidad;
-                await _context.SaveChangesAsync();
-                _response.Resultado = bodegaProductoBd;
+                bodegaProducto = bodegaProductoBd;
             }
-
+            await _context.SaveChangesAsync();
+            _response.Resultado = bodegaProducto;
             _response.IsExitoso = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Mensaje = "Se ha actualizado la cantidad";
+
+            //REGISTRAR KARDEX
+            var userId = User.FindFirstValue("UserId");
+            await _kardexServicio.RegistrarKardex(bodegaProducto.Id, "Entrada",
+            "Incremento de cantidades", stockAnterior,cantidad, userId);
+
             return Ok(_response);
         }
 
         [Authorize(Policy = "AdminVendedorRol")]
         [HttpPost("DisminuirCantidades")]
-        public async Task<ActionResult> DisminuirCantidades(
-            int bodegaId,
-            int productoId,
-            int cantidad
+        public async Task<ActionResult> DisminuirCantidades(int bodegaId, int productoId, int cantidad
         )
         {
             if (cantidad < 0)
@@ -101,15 +111,29 @@ namespace API.Controllers
                     $"La cantidad a disminuir es mayor a la existente: {bodegaProductoBd.Cantidad}"
                 );
 
+            int stockAnterior = bodegaProductoBd.Cantidad;
             bodegaProductoBd.Cantidad -= cantidad;
+
             if (bodegaProductoBd.Cantidad < 0)
                 bodegaProductoBd.Cantidad = 0;
+
             await _context.SaveChangesAsync();
 
             _response.Resultado = bodegaProductoBd;
             _response.IsExitoso = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Mensaje = "Se ha actualizado la cantidad";
+
+            var userId = User.FindFirstValue("UserId");
+            await _kardexServicio.RegistrarKardex(
+                bodegaProductoBd.Id,
+                "Salida",
+                "Disminución de cantidades",
+                stockAnterior,
+                cantidad,
+                userId
+            );
+
             return Ok(_response);
         }
 
