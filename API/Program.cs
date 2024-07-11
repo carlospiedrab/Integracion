@@ -4,6 +4,7 @@ using API.Middlewares;
 using Data;
 using Data.Inicializador;
 using Data.Interfaces;
+using Data.Servicios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -74,6 +75,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 });
 builder.Services.AddScoped<ITokenServicio, TokenServicio>();
 builder.Services.AddScoped<IDbInicializador, DbInicializador>();
+builder.Services.AddScoped<IKardexInventarioServicio, KardexInventarioServicio>();
 
 builder.Services.AddAuthorization(opt =>
 {
