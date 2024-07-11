@@ -169,5 +169,39 @@ namespace API.Controllers
         {
             return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
         }
+
+        [HttpGet("Perfil/{username}")]  // api/Account/Perfil/username
+        public async Task<ActionResult> GetUserProfile(string username)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+            {
+                _response.IsExitoso = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.Mensaje = "Usuario no encontrado";
+                return NotFound(_response);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var userDto = new UsuarioDto
+            {
+                UserId = user.Id.ToString(),
+                Username = user.UserName,
+                LastName = user.LastName,
+                FirstName = user.FirstName,
+                Email = user.Email,
+                Rol = string.Join(", ", roles),
+                Token = null, // Token puede ser configurado si es necesario
+                Url = Url.Action(nameof(GetUserProfile), "Account", new { username }, Request.Scheme)
+            };
+
+            _response.Resultado = userDto;
+            _response.IsExitoso = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Mensaje = "Perfil del Usuario";
+
+            return Ok(_response);
+        }
     }
 }
