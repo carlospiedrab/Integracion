@@ -16,6 +16,7 @@ namespace Models.Entidades
         public string NombreProducto { get; set; }
         public decimal Precio { get; set; }
         public decimal Costo { get; set; }
+        public bool Estado { get; set; }
 
         public int CategoriaId { get; set; }
         [ForeignKey("CategoriaId")]
@@ -25,5 +26,7 @@ namespace Models.Entidades
         [ForeignKey("MarcaId")]
         public Marca Marca { get; set; }
         public PrecioOferta Promocion { get; set; }
+
+
     }
 }
