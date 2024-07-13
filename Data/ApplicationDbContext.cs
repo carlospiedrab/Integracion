@@ -24,5 +24,6 @@ namespace Data
         public DbSet<BodegaProducto> BodegaProductos { get; set; }
         public DbSet<KardexInventario> kardexInventarios { get; set; }
         public DbSet<Compania> Companias { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
     }
 }
