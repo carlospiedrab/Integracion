@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using CryptoLib;
 using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,7 @@ namespace Data
 
         public TokenServicio(IConfiguration config, UserManager<AppUser> userManager)
         {
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtConfig:Secret"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Hash.Decrypt(config["JwtConfig:Secret"])));
             _userManager = userManager;
         }
 

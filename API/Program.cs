@@ -1,6 +1,7 @@
 using System.Text;
 using API.Errors;
 using API.Middlewares;
+using CryptoLib;
 using Data;
 using Data.Inicializador;
 using Data.Interfaces;
@@ -49,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
                 });
             });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Hash.Decrypt(builder.Configuration.GetConnectionString("DefaultConnection"));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
                                          options.UseSqlServer(connectionString));
 builder.Services.AddIdentityCore<AppUser>(opt =>
@@ -60,7 +61,7 @@ builder.Services.AddIdentityCore<AppUser>(opt =>
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-var secret = builder.Configuration["JwtConfig:Secret"];
+var secret = Hash.Decrypt(builder.Configuration["JwtConfig:Secret"]);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
