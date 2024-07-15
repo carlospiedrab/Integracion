@@ -22,10 +22,16 @@ namespace Models.Entidades
         public Proveedor Proveedor { get; set; }
 
         [Required(ErrorMessage = "{0} es Requerido")]
+        public int BodegaId { get; set; }
+
+        [ForeignKey("BodegaId")]
+        public Bodega Bodega { get; set; }
+
+        [Required(ErrorMessage = "{0} es Requerido")]
         public DateTime FechaIngreso { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "{0} es Requerido")]
-        [Column("Id",TypeName = "nvarchar(450)")]        
+        [Column("UsuarioId", TypeName = "nvarchar(450)")]
         public string UsuarioId { get; set; }
 
         [ForeignKey("UsuarioId")]
@@ -34,5 +40,6 @@ namespace Models.Entidades
         [Required(ErrorMessage = "{0} es Requerido")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalOrden { get; set; }
+        public ICollection<OrdenCompraDetalle> OrdenCompraDetalles { get; set; }
     }
 }

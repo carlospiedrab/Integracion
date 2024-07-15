@@ -7,14 +7,11 @@ namespace Models.Dtos
 {
     public class OrdenCompraDto
     {
-        public int OrdenCompraId { get; set; }
-
-        public int Proveedor { get; set; }        
-
+        public int ProveedorId { get; set; }
+        public int BodegaId { get; set; }
         public DateTime FechaIngreso { get; set; }
-
-        public string Usuario { get; set; }        
-
+        public string UsuarioId { get; set; }
         public decimal TotalOrden { get; set; }
+        public List<OrdenCompraDetalleDto> Detalles { get; set; }
     }
 }

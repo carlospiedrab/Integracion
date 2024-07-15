@@ -2,6 +2,7 @@
 CREATE TABLE OrdenCompra (
     OrdenCompraId INT NOT NULL IDENTITY,
     ProveedorId INT NOT NULL,
+	BodegaId INT NOT NULL,
     FechaIngreso DATETIME NOT NULL,
     UsuarioId NVARCHAR(450) NOT NULL,
     TotalOrden DECIMAL(18,2) NOT NULL       
@@ -14,6 +15,11 @@ ALTER TABLE OrdenCompra
 ADD CONSTRAINT Fk_OrdenCompra_Proveedor_ProveedorId
 FOREIGN KEY (ProveedorId) 
 REFERENCES Proveedor (ProveedorId) ON DELETE CASCADE;
+
+ALTER TABLE OrdenCompra 
+ADD CONSTRAINT Fk_OrdenCompra_Bodega_Id
+FOREIGN KEY (BodegaId) 
+REFERENCES dbo.Bodega(BodegaId) ON DELETE CASCADE;
 
 ALTER TABLE OrdenCompra 
 ADD CONSTRAINT Fk_OrdenCompra_AspNetUsers_Id
@@ -68,6 +74,7 @@ BEGIN
 END;
 
 -- Desencadenador cuando se elimina un registro en la tabla OrdenCompraDetalle
+
 CREATE TRIGGER trg_UpdateTotalOrden_Delete
 ON OrdenCompraDetalle
 AFTER DELETE
@@ -85,8 +92,3 @@ BEGIN
     FROM OrdenCompra oc
     INNER JOIN deleted d ON oc.OrdenCompraId = d.OrdenCompraId;
 END;
-
-
-
-
-

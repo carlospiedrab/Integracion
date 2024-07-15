@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Models.Entidades;
 
 namespace Data
@@ -26,5 +27,18 @@ namespace Data
         public DbSet<Compania> Companias { get; set; }
         public DbSet<OrdenCompra> OrdenCompras { get; set; }
         public DbSet<OrdenCompraDetalle> OrdenCompraDetalles { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<OrdenCompraDetalle>()
+                .Property(e => e.Subtotal)
+                .HasComputedColumnSql("CAST((Costo * Cantidad) AS DECIMAL(18,2)) PERSISTED", stored: true)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+            modelBuilder.Entity<OrdenCompraDetalle>()
+                 .ToTable(tb => tb.UseSqlOutputClause(false));
+        }
     }
 }
