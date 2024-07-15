@@ -27,6 +27,7 @@ namespace Data
         public DbSet<Compania> Companias { get; set; }
         public DbSet<OrdenCompra> OrdenCompras { get; set; }
         public DbSet<OrdenCompraDetalle> OrdenCompraDetalles { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,6 +41,6 @@ namespace Data
             modelBuilder.Entity<OrdenCompraDetalle>()
                  .ToTable(tb => tb.UseSqlOutputClause(false));
         }
-        public DbSet<Cliente> Clientes { get; set; }
+        
     }
 }
