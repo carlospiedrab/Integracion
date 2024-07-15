@@ -54,12 +54,16 @@ namespace API.Controllers
                         return BadRequest("La cantidad no puede ser negativa.");
                 }
 
+                var claimIdentity = (ClaimsIdentity)User.Identity;
+                var claim = claimIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                var appUser = await _context.AppUser.FirstOrDefaultAsync(u => u.UserName == claim.Value);
+
                 var ordenCompra = new OrdenCompra
                 {
                     ProveedorId = createOrdenCompraDto.ProveedorId,
                     BodegaId = createOrdenCompraDto.BodegaId,
                     FechaIngreso = DateTime.Now,
-                    UsuarioId = User.FindFirstValue("UserId"),
+                    UsuarioId = appUser.Id, //User.FindFirstValue("UserId"),
                     TotalOrden = 0
                 };
 

@@ -32,9 +32,11 @@ namespace Models.Entidades
         public int Cantidad { get; set; }
 
         [Required(ErrorMessage = "{0} es Requerido")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Costo { get; set; }
 
         [Required(ErrorMessage = "{0} es Requerido")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Subtotal { get; set; }
     }
 }

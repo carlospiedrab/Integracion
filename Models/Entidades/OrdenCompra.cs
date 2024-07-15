@@ -38,7 +38,7 @@ namespace Models.Entidades
         public AppUser AppUser { get; set; }
 
         [Required(ErrorMessage = "{0} es Requerido")]
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(18,2)")]        
         public decimal TotalOrden { get; set; }
         public ICollection<OrdenCompraDetalle> OrdenCompraDetalles { get; set; }
     }
