@@ -40,5 +40,6 @@ namespace Data
             modelBuilder.Entity<OrdenCompraDetalle>()
                  .ToTable(tb => tb.UseSqlOutputClause(false));
         }
+        public DbSet<Cliente> Clientes { get; set; }
     }
 }
